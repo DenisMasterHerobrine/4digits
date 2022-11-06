@@ -1,9 +1,3 @@
-<style>
-table, th, td {
-  border:1px solid black;
-}
-</style>
-
 <div align="center"><h1> 4 Digits </h1></div>
 
 <div align="center">"4 Digits" is an C++ console/UE5 game, where the player should guess the 4 digit number to win the game. Similar to Wordle, but for 4 digit numbers.</div>

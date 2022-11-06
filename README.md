@@ -4,7 +4,7 @@
 
 <div align="center"><h1> Dependencies</h1></div>
 <div align="center">Requires
-<a href="https://github.com/ArthurSonzogni/FTXUI"><a href="">
+<a href="https://github.com/ArthurSonzogni/FTXUI">
         FTXUI (v3.0.0 or higher)</a>.
 </div> 
 

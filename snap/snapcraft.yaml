@@ -1,0 +1,31 @@
+name: 4digits
+version: '1.0.0'
+summary: Launcher for the C++ Console Edition of "4 Digits".
+description: "4 Digits" is an C++ console/UE5 (?) game, where the player should guess the 4 digit number to win the game. Similar to Wordle, but for numbers.
+
+grade: stable
+confinement: strict
+base: core18
+
+apps:
+  4digits-launcher:
+    command: 4digits-launcher
+
+parts:
+  4digits-launcher:
+    plugin: cmake
+    source: https://github.com/DenisMasterHerobrine/4digits
+    source-type: git
+    source-depth: 1
+    build-snaps: [cmake/latest/edge] # We need cmake >= 3.11
+    override-build: |
+      /snap/bin/cmake \
+        -DCMAKE_INSTALL_PREFIX=$SNAPCRAFT_PART_INSTALL/usr/local \
+        -DCMAKE_BUILD_TYPE=Release \
+        $SNAPCRAFT_PART_SRC
+      make -j 4
+      make install
+
+passthrough:
+  title: 4digits
+  license: MIT

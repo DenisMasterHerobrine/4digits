@@ -29,17 +29,19 @@ MenuEntryOption Colored(ftxui::Color c) {
   return option;
 }
 
-void play_music()
+void PlayMusic()
 {
-    // WIP: TO-DO MIDI extraction and repeating the song in loop.
-    mciSendString("open .\\DREADFACTORY.MID type sequencer alias DREADFACTORY", NULL, 0, NULL);
-    TCHAR tch[100];
-    mciSendString("seek DREADFACTORY to start", tch, 100, NULL);
-    mciSendString("play DREADFACTORY", NULL, 0, NULL);
+    PlaySound("MAIN_MUSIC", NULL, SND_RESOURCE | SND_ASYNC | SND_LOOP);
 }
 
+void StopMusic()
+{
+    PlaySound("MAIN_MUSIC", NULL, SND_RESOURCE | SND_ASYNC | SND_LOOP);
+}
 
 int main(int argc, const char* argv[]) {
+  SetConsoleTitleA("Four Digits");
+
   auto screen = ScreenInteractive::Fullscreen();
 
   int selected = 0;
@@ -48,7 +50,7 @@ int main(int argc, const char* argv[]) {
           MenuEntry("Start  Game  ") | center,
           MenuEntry("Options  ") | center,
           MenuEntry("Credits  ") | center,
-          MenuEntry("Quit  ") | center,
+          MenuEntry("Quit?  ") | center,
       },
       &selected);
 
@@ -62,7 +64,7 @@ int main(int argc, const char* argv[]) {
            border | bgcolor(Color::DeepSkyBlue4);
   });
 
-  play_music();
+  PlayMusic();
   screen.Loop(renderer);
 
   std::cout << "Selected element = " << selected << std::endl;

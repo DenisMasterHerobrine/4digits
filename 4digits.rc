@@ -1,1 +1,2 @@
-IDI_ICON1 ICON DISCARDABLE "favicon.ico"
+IDI_ICON1 ICON DISCARDABLE "assets\\favicon.ico"
+MAIN_MUSIC WAVE "src\\assets\\music\\dreadfactory.wav"

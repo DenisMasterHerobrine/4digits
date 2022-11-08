@@ -17,18 +17,6 @@
 
 using namespace ftxui;
 
-// Define a special style for some menu entry.
-MenuEntryOption Colored(ftxui::Color c) {
-  MenuEntryOption option;
-  option.animated_colors.foreground.enabled = true;
-  option.animated_colors.background.enabled = true;
-  option.animated_colors.background.active = c;
-  option.animated_colors.background.inactive = Color::Black;
-  option.animated_colors.foreground.active = Color::White;
-  option.animated_colors.foreground.inactive = c;
-  return option;
-}
-
 void PlayMusic()
 {
     PlaySound("MAIN_MUSIC", NULL, SND_RESOURCE | SND_ASYNC | SND_LOOP);
@@ -36,13 +24,14 @@ void PlayMusic()
 
 void StopMusic()
 {
-    PlaySound("MAIN_MUSIC", NULL, SND_RESOURCE | SND_ASYNC | SND_LOOP);
+    PlaySound(NULL, NULL, SND_RESOURCE | SND_ASYNC | SND_LOOP);
 }
 
 int main(int argc, const char* argv[]) {
   SetConsoleTitleA("Four Digits");
 
   auto screen = ScreenInteractive::Fullscreen();
+  auto screenCredits = ScreenInteractive::Fullscreen();
 
   int selected = 0;
   auto menu = Container::Vertical(
@@ -64,8 +53,46 @@ int main(int argc, const char* argv[]) {
            border | bgcolor(Color::DeepSkyBlue4);
   });
 
-  PlayMusic();
-  screen.Loop(renderer);
+  auto rendererCredits = Renderer([&] {
+      return vbox({
+                 text("4 Digits (v0.6.0)") | center | color(Color::BlueLight),
+                 separator(),
+                 text("Coded by DenisMasterHerobrine (also known as DMHDev, Denis Kalashnikov). Licensed under MIT License.") | center | color(Color::White),
+                 text("Music: Dread Factory by MFG38 from DOOMWorld's Ultimate MIDI Pack by northivanastan") | center | color(Color::Red1),
+          }) |
+          border | bgcolor(Color::DeepSkyBlue4);
+      });
 
-  std::cout << "Selected element = " << selected << std::endl;
+  auto componentCredits = CatchEvent(rendererCredits, [&](Event event) {
+      if (event == Event::Character('\n')) {
+          screen.ExitLoopClosure()();
+          return true;
+      }
+      return false;
+      }
+  );
+
+  auto component = CatchEvent(renderer, [&](Event event) {
+      if (event == Event::Character('\n') && selected == 2) {
+          screen.ExitLoopClosure()();
+          screen.Loop(componentCredits);
+
+          return true;
+      }
+
+      if (event == Event::Character('\n') && selected == 3) {
+          screen.ExitLoopClosure()();
+          return true;
+      }
+      return false;
+      }
+  );
+
+  PlayMusic();
+
+  screen.Loop(component);
+
+  if (selected == 3) {
+      return EXIT_SUCCESS;
+  }
 }

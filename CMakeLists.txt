@@ -23,7 +23,7 @@ project(4digits-launcher
 )
 
 set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/4digits.rc")
-add_executable(4digits-launcher src/main.cpp ${APP_ICON_RESOURCE_WINDOWS} )
+add_executable(4digits-launcher "src/Game.cpp" ${APP_ICON_RESOURCE_WINDOWS} )
 target_include_directories(4digits-launcher PRIVATE src)
 
 target_link_libraries(4digits-launcher

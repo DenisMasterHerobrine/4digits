@@ -17,7 +17,7 @@
   </tr>
   <tr>
     <th>Written on C++, licensed under MIT License. C++ Console edition contains several modes, works out-of-box from one binary file, have very simple GUIs and originally made as prototype and a solution for a individual task. It's open-source. Anyone can play it, work upon it under the specified license, learn from it and etc..</td>
-    <th>Written on C++, adopted under Unreal Engine 5. Currently in heavy WIP state. Probably this edition will be a part of a huge my new project. However, this edition is licensed under All Rights Reserved. It's closed-source. Contains lots of differents modes of this mini-games with it's own story, probably will come in 2023-2024 in Steam or itch.io, after it anyone can play a demo and if someone likes it, you'll be able to buy the game. Inspired by The Witness game.</td>
+    <th>Written on C++, adopted under Unreal Engine 5. Currently in heavy WIP state. Probably this edition will be a part of a my huge new project. However, this edition is licensed under All Rights Reserved. It's closed-source. Contains lots of differents modes of this mini-games with it's own story, probably will come in 2023-2024 in Steam or itch.io, after it anyone can play a demo and if someone likes it, you'll be able to buy the game. Inspired by The Witness game.</td>
   </tr>
   <tr>
     <th>Can be ran on Windows only. Linux users may use <a href="https://www.winehq.org">Wine</a> to launch this edition.</td>

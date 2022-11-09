@@ -47,7 +47,9 @@ void executeLink(const std::string& link) {
     ShellExecute(0, 0, link.c_str(), 0, 0, SW_SHOW);
 }
 
+// Sets an English (US) default keyboard layout if the system is Windows, since we cannot support multiple languages for menu navigation in the game window. 
+// Called without any parameters, so just call it using asynchronous callbacks or any other multithreading way and you're ready to go. 
 void setEnglishLocale() {
+    // WARNING: YOU NEED AN ANOTHER THREAD APPROACH FOR THIS. IF YOU CALL IT IN MAIN THREAD, YOU'LL GET STUCK.
     SendMessageW(HWND_BROADCAST, WM_INPUTLANGCHANGEREQUEST, 0, reinterpret_cast<LPARAM>(LoadKeyboardLayoutA("00000409", KLF_ACTIVATE | KLF_SETFORPROCESS)));
-
 }

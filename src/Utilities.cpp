@@ -8,6 +8,9 @@
 #include "Utilities.h"
 #include <string>
 #include <iostream>
+#include <vector>
+#include <unordered_set>
+
 
 // Plays a "Four Digits" Main Menu Theme - "Dread Factory" by MFG38, looped and working asynchronously. 
 // Called without any parameters, so just call it and it will start playing until you call Utilties#stopMusic(). 

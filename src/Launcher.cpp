@@ -13,6 +13,7 @@
 
 // Four Digits headers.
 #include <Utilities.h> // for in-game music interaction, playing/disabling sounds, doing some abstract stuff not related to the game.
+#include <4DigitsAPI.h> // for game entrypoint callback and the whole game logic being processed on launcher's state.
 
 using namespace ftxui;
 
@@ -27,7 +28,15 @@ int main(int argc, const char* argv[]) {
     setWindowName(name);
 
     auto screen = ScreenInteractive::Fullscreen();
-    auto screenCredits = ScreenInteractive::Fullscreen();
+    auto creditsScreen = ScreenInteractive::Fullscreen();
+
+    std::string code{};
+    std::string errorCode{};
+    Component inputUserCode = Input(&code, "Guess the code for the computer.");
+
+    auto componentInput = Container::Vertical({
+      inputUserCode,
+    });
 
     int selected = 0;
     auto menu = Container::Vertical(
@@ -42,16 +51,29 @@ int main(int argc, const char* argv[]) {
     // Display together the menu with a border
     auto renderer = Renderer(menu, [&] {
         return vbox({
-               text("4 Digits (v0.6.0)") | center | color(Color::LightSkyBlue1),
+               text("Four Digits (v0.6.0)") | center | color(Color::LightSkyBlue1),
                separator(),
                menu->Render() | frame,
            }) |
            border | bgcolor(Color::MediumPurple4);
     });
 
+    // Display together the menu with a border
+    auto rendererGame = Renderer(componentInput, [&] {
+        return vbox({
+               text("Four Digits - Starting a new game...") | center | color(Color::LightSkyBlue1),
+               separator(),
+               hbox(text(" Your Code: "), inputUserCode->Render()) | frame,
+               separator(),
+               hbox(text(" Debug: "), text(code)) | frame,
+               hbox(text(" Debug: ERROR_CODE = "), text(errorCode)) | frame,
+            }) |
+            border | bgcolor(Color::MediumPurple4);
+        });
+
     auto rendererCredits = Renderer([&] {
         return vbox({
-                 text("4 Digits (v0.6.0)") | center | color(Color::LightSkyBlue1),
+                 text("Four Digits (v0.6.0)") | center | color(Color::LightSkyBlue1),
                  separator(),
                  text("Coded by DenisMasterHerobrine (also known as DMHDev, Denis Kalashnikov). Licensed under MIT License.") | center | color(Color::White),
                  text("") | center,
@@ -66,6 +88,21 @@ int main(int argc, const char* argv[]) {
                  text("Press ENTER to leave Credits menu.") | center | color(Color::White),
         }) | border | bgcolor(Color::MediumPurple4);
     });
+
+    auto componentGame = CatchEvent(rendererGame, [&](Event event) {
+        if (event == Event::Character('\n')) {
+            char* arrayCode = new char{};
+            strcpy(arrayCode, code.c_str());
+            char* errorCodeChar = new char{};
+            strcpy(arrayCode, code.c_str());
+            char* errorCodeType = isUniqueHiddenCode(arrayCode);
+            errorCode = errorCodeType;
+            return true;
+        }
+
+        return false;
+        }
+    );
 
     auto componentCredits = CatchEvent(rendererCredits, [&](Event event) {
         if (event == Event::Character('\n')) {
@@ -91,7 +128,7 @@ int main(int argc, const char* argv[]) {
   auto component = CatchEvent(renderer, [&](Event event) {
       if (event == Event::Character('\n') && selected == 0) {
           screen.ExitLoopClosure()();
-          //startGameEntrypointCallback();
+          screen.Loop(componentGame);
 
           return true;
       }

@@ -1,2 +1,28 @@
 IDI_ICON1 ICON DISCARDABLE "assets\\favicon.ico"
 MAIN_MUSIC WAVE "src\\assets\\music\\dreadfactory.wav"
+1 VERSIONINFO
+FILEVERSION 0, 6, 0, 10
+PRODUCTVERSION 0, 6, 0, 10
+FILEOS 0x4
+FILETYPE 0x1
+{
+    BLOCK "StringFileInfo"
+    {
+        BLOCK "040904E4"
+        {
+            VALUE "CompanyName", "DMHDevelopment\0"
+                VALUE "FileDescription", "Four Digits Launcher executable to launch the game.\0"
+                VALUE "FileVersion", "0.6.0.10\0"
+                VALUE "ProductName", "Four Digits\0"
+                VALUE "InternalName", "Four Digits\0"
+                VALUE "LegalCopyright", "(c) DenisMasterHerobrine, 2022\0"
+                VALUE "OriginalFilename", "4digits-launcher\0"
+                VALUE "ProductVersion", "0.6.0.10\0"
+        }
+    }
+
+    BLOCK "VarFileInfo"
+    {
+        VALUE "Translation", 0x0409 0x04E4
+    }
+}

@@ -11,7 +11,7 @@
 
 // Generates a hidden code using "Memory and Time Salting" (MaTS) algorithm.
 const char* generateHiddenCode() {
-	srand(time(0));
+	srand(static_cast<int>(getSeed()));
 	int code = 1000 + rand() % 10000;
 	char* arrayCode = new char{};
 	strcpy(arrayCode, std::to_string(code).c_str());
@@ -60,5 +60,45 @@ char* isUniqueHiddenCode(const char* code) {
 	}
 
 	return "SKIPPED_CHECKS";
-	//set.erase(set.begin(), set.end()); // Delete the set to save memory.
+}
+
+// Checks if player's hidden code is correct to make a turn.
+char* isValidCode(const char* code) {
+	size_t length = strlen(code);
+	char* errorCode = "INITIALIZED_SUCCESSFULLY";
+
+	if (length != 4) {
+		errorCode = "NOT_VALID_CODE_LENGTH"; // Not a valid code length, entered less or more symbols by user.
+		return errorCode;
+	}
+
+	int numberCounter{};
+	for (int cn = 0; cn < 4; cn++) {
+		if (int(code[cn]) >= '0' && int(code[cn] <= '9')) numberCounter++;
+	}
+
+	if (numberCounter != 4) {
+		errorCode = "NOT_VALID_CODE"; // Not a valid code, but 4 letters.
+		return errorCode;
+	}
+
+	return "";
+}
+
+// Decorates a vector<string> codes array into something cool.
+// Turns an array ["1234", "4321"] into stylized array:
+// Turn 1: 1234; 
+// Turn 2: 4321.
+std::string turnCodesDecorator(std::vector<std::string> v) {
+	int n = v.size();
+
+	std::string res{};
+	for (int i = 0; i < n; i++) {
+		if (!(i == n - 1)) res += "Turn " + std::to_string(i + 1) + ": " + v[i] + "; \n";
+		else {
+			res += "Turn " + std::to_string(i + 1) + ": " + v[i] + ".";
+		}
+	}
+
+	return res;
 }

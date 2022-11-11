@@ -28,11 +28,12 @@ SOFTWARE.
 #include "string"
 #include "ctime"
 #include "iomanip"
-#include "Generator.h"
 #include "stdlib.h"
 #include "regex"
 #include "iostream"
 #include "algorithm"
+
+#include "Random.h"
 
 /*
 *	Random.cpp | Password Generator's Random API | Made by DMHDev | v1.0.0
@@ -44,8 +45,6 @@ SOFTWARE.
 unsigned int getSeed()
 {
 	// A Pseudo-Random based on Memory and Time Salting Method
-
-	int* arr[1]{0};
 
 	int* abstractMemorySalt = new int{};
 	std::string currentTimeSalt = std::to_string(time(0));

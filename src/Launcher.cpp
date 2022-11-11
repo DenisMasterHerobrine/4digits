@@ -28,20 +28,29 @@ int main(int argc, const char* argv[]) {
     setWindowName(name);
 
     auto screen = ScreenInteractive::Fullscreen();
-    auto creditsScreen = ScreenInteractive::Fullscreen();
 
     std::string code{};
-    std::string errorCode{};
+    std::string userTurnCode{};
+    std::string errorCode{}, errorCodeTurn{};
+
+    std::vector<std::string> userTurnCodes{};
+
     Component inputUserCode = Input(&code, "Guess the code for the computer.");
+    Component inputUserTurnCode = Input(&userTurnCode, "Enter your code to try to guess computer's code.");
 
     auto componentInput = Container::Vertical({
       inputUserCode,
+    });
+
+    auto componentInputTurn = Container::Vertical({
+      inputUserTurnCode
     });
 
     int selected = 0;
     auto menu = Container::Vertical(
       {
           MenuEntry("Start  Game  ") | center,
+          MenuEntry("How to Play  ") | center,
           MenuEntry("Options  ") | center,
           MenuEntry("Credits  ") | center,
           MenuEntry("Quit?  ") | center,
@@ -69,6 +78,22 @@ int main(int argc, const char* argv[]) {
                hbox(text(" Debug: ERROR_CODE = "), text(errorCode)) | frame,
             }) |
             border | bgcolor(Color::MediumPurple4);
+    });
+
+    // Display together the menu with a border
+    auto rendererGuessing = Renderer(componentInputTurn, [&] {
+        return vbox({
+               text("Four Digits - Game") | center | color(Color::LightSkyBlue1),
+               separator(),
+               vbox(text(" Your Turn: "), inputUserTurnCode->Render()) | frame,
+               separator(),
+               hbox({
+               vbox(text(" User's Output: "), paragraph(turnCodesDecorator(userTurnCodes))) | frame,
+               separator(),
+               vbox(text(" Computer's input "), text(errorCode)) | frame,
+               }),
+            }) |
+            border | bgcolor(Color::MediumPurple4);
         });
 
     auto rendererCredits = Renderer([&] {
@@ -79,7 +104,7 @@ int main(int argc, const char* argv[]) {
                  text("") | center,
                  text("Music: Dread Factory by MFG38 from DOOMWorld's Ultimate MIDI Pack by northivanastan") | center | color(Color::DarkRedBis),
                  text("") | center,
-                 text("https://github.com/DenisMasterHerobrine/4digits") | center | color(Color::GrayLight),
+                 text("Sources: https://github.com/DenisMasterHerobrine/4digits") | center | color(Color::GrayLight),
                  text("") | center,
                  text("") | center,
                  text("") | center,
@@ -89,14 +114,37 @@ int main(int argc, const char* argv[]) {
         }) | border | bgcolor(Color::MediumPurple4);
     });
 
+    auto componentGuessing = CatchEvent(rendererGuessing, [&](Event event) {
+        if (event == Event::Character('\n')) {
+            errorCodeTurn = "BEGIN_CHECK";
+            char* arrayCode = new char{};
+            strcpy(arrayCode, userTurnCode.c_str());
+            char* errorCodeType = isValidCode(arrayCode);
+            errorCodeTurn = errorCodeType;
+
+            if (errorCode == "") {
+                userTurnCodes.push_back(userTurnCode);
+            }
+            return true;
+        }
+
+        return false;
+        }
+    );
+
     auto componentGame = CatchEvent(rendererGame, [&](Event event) {
         if (event == Event::Character('\n')) {
+            errorCode = "BEGIN_CHECK";
             char* arrayCode = new char{};
-            strcpy(arrayCode, code.c_str());
-            char* errorCodeChar = new char{};
             strcpy(arrayCode, code.c_str());
             char* errorCodeType = isUniqueHiddenCode(arrayCode);
             errorCode = errorCodeType;
+
+            if (errorCode == "") {
+                if (userTurnCodes.size() > 0) userTurnCodes.clear();
+                screen.ExitLoopClosure()();
+                screen.Loop(componentGuessing);
+            }
             return true;
         }
 
@@ -133,14 +181,21 @@ int main(int argc, const char* argv[]) {
           return true;
       }
 
-      if (event == Event::Character('\n') && selected == 2) {
+      if (event == Event::Character('\n') && selected == 1) {
+          screen.ExitLoopClosure()();
+          screen.Loop(componentGame);
+
+          return true;
+      }
+
+      if (event == Event::Character('\n') && selected == 3) {
           screen.ExitLoopClosure()();
           screen.Loop(componentCredits);
 
           return true;
       }
 
-      if (event == Event::Character('\n') && selected == 3) {
+      if (event == Event::Character('\n') && selected == 4) {
           screen.ExitLoopClosure()();
           return true;
       }

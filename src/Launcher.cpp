@@ -88,7 +88,7 @@ int main(int argc, const char* argv[]) {
                vbox(text(" Your Turn: "), inputUserTurnCode->Render()) | frame,
                separator(),
                hbox({
-               vbox(text(" User's Output: "), paragraph(turnCodesDecorator(userTurnCodes))) | frame,
+               vbox(text(" User's Output: "), paragraph(turnCodesDecorator(userTurnCodes, code))),
                separator(),
                vbox(text(" Computer's input "), text(errorCode)) | frame,
                }),
@@ -122,8 +122,12 @@ int main(int argc, const char* argv[]) {
             char* errorCodeType = isValidCode(arrayCode);
             errorCodeTurn = errorCodeType;
 
-            if (errorCode == "") {
+            if (errorCodeTurn == "") {
                 userTurnCodes.push_back(userTurnCode);
+                userTurnCode = "";
+            }
+            else {
+                userTurnCode = "ERROR: " + std::string(errorCodeType);
             }
             return true;
         }

@@ -82,15 +82,64 @@ char* isValidCode(const char* code) {
 		return errorCode;
 	}
 
-	return "";
+	errorCode = ""; // Return nothing if we're fine.
+
+	return errorCode;
+}
+
+// Encodes a code into a "bulls and cows" based code.
+std::vector<std::string> encodeVector(std::vector<std::string> v, std::string encryptCode, std::string errorEncryptionCode) {
+	std::vector<std::string> encodedVector;
+	if (encryptCode.size() != 4 && !v.empty()) {
+		encodedVector = v;
+		return encodedVector; // Do not encrypt, since this method supports only 4-bit encryption.
+	}
+
+	int bulls{};
+	int cows{};
+
+	std::string encrypted{};
+
+	char firstKey = encryptCode[0];
+	char secondKey = encryptCode[1];
+	char thirdKey = encryptCode[2];
+	char fourthKey = encryptCode[3];
+
+	for (int codes = 0; codes < v.size(); codes++) {
+		// Check first character:
+		if (v[codes].find(firstKey) != std::string::npos) ++cows;
+		if (v[codes][0] == firstKey) ++bulls;
+
+		// Check second character:
+		if (v[codes].find(secondKey) != std::string::npos) ++cows;
+		if (v[codes][1] == secondKey) ++bulls;
+
+		// Check third character:
+		if (v[codes].find(thirdKey) != std::string::npos) ++cows;
+		if (v[codes][2] == thirdKey) ++bulls;
+
+		// Check fourth character:
+		if (v[codes].find(fourthKey) != std::string::npos) ++cows;
+		if (v[codes][3] == fourthKey) ++bulls;
+
+		encrypted = std::to_string(bulls) + "B" + std::to_string(cows) + "C";
+
+		encodedVector.push_back(encrypted);
+		encrypted = "";
+		cows = 0; bulls = 0;
+	}
+
+	return encodedVector;
 }
 
 // Decorates a vector<string> codes array into something cool.
 // Turns an array ["1234", "4321"] into stylized array:
 // Turn 1: 1234; 
 // Turn 2: 4321.
-std::string turnCodesDecorator(std::vector<std::string> v) {
+std::string turnCodesDecorator(std::vector<std::string> v, std::string keyCode) {
 	int n = v.size();
+	std::string errorCode{};
+	v = encodeVector(v, keyCode, errorCode);
 
 	std::string res{};
 	for (int i = 0; i < n; i++) {

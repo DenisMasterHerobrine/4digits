@@ -56,3 +56,13 @@ void setEnglishLocale() {
     // WARNING: YOU NEED AN ANOTHER THREAD APPROACH FOR THIS. IF YOU CALL IT IN MAIN THREAD, YOU'LL GET STUCK.
     SendMessageW(HWND_BROADCAST, WM_INPUTLANGCHANGEREQUEST, 0, reinterpret_cast<LPARAM>(LoadKeyboardLayoutA("00000409", KLF_ACTIVATE | KLF_SETFORPROCESS)));
 }
+
+bool contains(const std::string& value, const std::vector<std::string>& array)
+{
+    for (int i = 0; i < array.size(); ++i) {
+        if (array[i] == value) {
+            return true;
+        }
+    }
+    return false;
+}

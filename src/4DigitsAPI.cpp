@@ -100,6 +100,7 @@ std::vector<std::string> encodeVector(std::vector<std::string> v, std::string en
 
 	std::string encrypted{};
 
+	// Get hidden code keys;
 	char firstKey = encryptCode[0];
 	char secondKey = encryptCode[1];
 	char thirdKey = encryptCode[2];
@@ -108,19 +109,19 @@ std::vector<std::string> encodeVector(std::vector<std::string> v, std::string en
 	for (int codes = 0; codes < v.size(); codes++) {
 		// Check first character:
 		if (v[codes].find(firstKey) != std::string::npos) ++cows;
-		if (v[codes][0] == firstKey) ++bulls;
+		if (v[codes][0] == firstKey) { ++bulls; --cows; }
 
 		// Check second character:
 		if (v[codes].find(secondKey) != std::string::npos) ++cows;
-		if (v[codes][1] == secondKey) ++bulls;
+		if (v[codes][1] == secondKey) { ++bulls; --cows; }
 
 		// Check third character:
 		if (v[codes].find(thirdKey) != std::string::npos) ++cows;
-		if (v[codes][2] == thirdKey) ++bulls;
+		if (v[codes][2] == thirdKey) { ++bulls; --cows; }
 
 		// Check fourth character:
 		if (v[codes].find(fourthKey) != std::string::npos) ++cows;
-		if (v[codes][3] == fourthKey) ++bulls;
+		if (v[codes][3] == fourthKey) { ++bulls; --cows; }
 
 		encrypted = std::to_string(bulls) + "B" + std::to_string(cows) + "C";
 
@@ -136,10 +137,11 @@ std::vector<std::string> encodeVector(std::vector<std::string> v, std::string en
 // Turns an array ["1234", "4321"] into stylized array:
 // Turn 1: 1234; 
 // Turn 2: 4321.
-std::string turnCodesDecorator(std::vector<std::string> v, std::string keyCode) {
+std::string turnCodesDecorator(std::vector<std::string> v, std::string keyCode, std::vector<std::string>& v2) {
 	int n = v.size();
 	std::string errorCode{};
 	v = encodeVector(v, keyCode, errorCode);
+	v2 = v;
 
 	std::string res{};
 	for (int i = 0; i < n; i++) {

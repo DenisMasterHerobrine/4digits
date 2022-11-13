@@ -17,197 +17,239 @@
 
 using namespace ftxui;
 
-int main(int argc, const char* argv[]) {
-    
-    std::thread AsyncLanguageLayoutChangeThread{
-        setEnglishLocale
-    };
-    AsyncLanguageLayoutChangeThread.native_handle();
+const std::string& name = "Four Digits";
 
-    const std::string& name = "Four Digits";
-    setWindowName(name);
+auto screen = ScreenInteractive::Fullscreen();
 
-    auto screen = ScreenInteractive::Fullscreen();
+bool isEnded{};
+std::string code{};
+std::string userTurnCode{};
+std::string errorCode{}, errorCodeTurn{};
 
-    std::string code{};
-    std::string userTurnCode{};
-    std::string errorCode{}, errorCodeTurn{};
+std::vector<std::string> userTurnCodes{};
+std::vector<std::string> encryptedUserTurnCodes{};
 
-    std::vector<std::string> userTurnCodes{};
+Component inputUserCode = Input(&code, "Guess the code for the computer.");
+Component inputUserTurnCode = Input(&userTurnCode, "Enter your code to try to guess computer's code.");
 
-    Component inputUserCode = Input(&code, "Guess the code for the computer.");
-    Component inputUserTurnCode = Input(&userTurnCode, "Enter your code to try to guess computer's code.");
+auto componentInput = Container::Vertical({
+  inputUserCode,
+});
 
-    auto componentInput = Container::Vertical({
-      inputUserCode,
+auto componentInputTurn = Container::Vertical({
+  inputUserTurnCode
+});
+
+int selected = 0;
+auto menu = Container::Vertical(
+    {
+        MenuEntry("Start  Game  ") | center,
+        MenuEntry("How to Play  ") | center,
+        MenuEntry("Options  ") | center,
+        MenuEntry("Credits  ") | center,
+        MenuEntry("Quit?  ") | center,
+    },
+    &selected);
+
+// Display together the menu with a border
+auto renderer = Renderer(menu, [&] {
+    return vbox({
+           text("Four Digits (v0.6.0)") | center | color(Color::LightSkyBlue1),
+           separator(),
+           menu->Render() | frame,
+        }) |
+        border | bgcolor(Color::MediumPurple4);
     });
 
-    auto componentInputTurn = Container::Vertical({
-      inputUserTurnCode
+// Display together the menu with a border
+auto rendererGame = Renderer(componentInput, [&] {
+    return vbox({
+           text("Four Digits - Starting a new game...") | center | color(Color::LightSkyBlue1),
+           separator(),
+           hbox(text(" Your Code: "), inputUserCode->Render()) | frame,
+           separator(),
+           hbox(text(" Debug: "), text(code)) | frame,
+           hbox(text(" Debug: ERROR_CODE = "), text(errorCode)) | frame,
+        }) |
+        border | bgcolor(Color::MediumPurple4);
     });
 
-    int selected = 0;
-    auto menu = Container::Vertical(
-      {
-          MenuEntry("Start  Game  ") | center,
-          MenuEntry("How to Play  ") | center,
-          MenuEntry("Options  ") | center,
-          MenuEntry("Credits  ") | center,
-          MenuEntry("Quit?  ") | center,
-      },
-      &selected);
-
-    // Display together the menu with a border
-    auto renderer = Renderer(menu, [&] {
-        return vbox({
-               text("Four Digits (v0.6.0)") | center | color(Color::LightSkyBlue1),
-               separator(),
-               menu->Render() | frame,
-           }) |
-           border | bgcolor(Color::MediumPurple4);
+// Display together the menu with a border
+auto rendererGuessing = Renderer(componentInputTurn, [&] {
+    return vbox({
+           text("Four Digits - Game") | center | color(Color::LightSkyBlue1),
+           separator(),
+           vbox(text(" Your Turn: "), inputUserTurnCode->Render()) | frame,
+           separator(),
+           hbox({
+           vbox(text(" User's Output: "), paragraph(turnCodesDecorator(userTurnCodes, code, encryptedUserTurnCodes))),
+           separator(),
+           vbox(text(" Computer's Output: "), text(errorCode)) | frame,
+           }),
+        }) |
+        border | bgcolor(Color::MediumPurple4);
     });
 
-    // Display together the menu with a border
-    auto rendererGame = Renderer(componentInput, [&] {
-        return vbox({
-               text("Four Digits - Starting a new game...") | center | color(Color::LightSkyBlue1),
-               separator(),
-               hbox(text(" Your Code: "), inputUserCode->Render()) | frame,
-               separator(),
-               hbox(text(" Debug: "), text(code)) | frame,
-               hbox(text(" Debug: ERROR_CODE = "), text(errorCode)) | frame,
-            }) |
-            border | bgcolor(Color::MediumPurple4);
-    });
-
-    // Display together the menu with a border
-    auto rendererGuessing = Renderer(componentInputTurn, [&] {
-        return vbox({
-               text("Four Digits - Game") | center | color(Color::LightSkyBlue1),
-               separator(),
-               vbox(text(" Your Turn: "), inputUserTurnCode->Render()) | frame,
-               separator(),
-               hbox({
-               vbox(text(" User's Output: "), paragraph(turnCodesDecorator(userTurnCodes, code))),
-               separator(),
-               vbox(text(" Computer's input "), text(errorCode)) | frame,
-               }),
-            }) |
-            border | bgcolor(Color::MediumPurple4);
-        });
-
-    auto rendererCredits = Renderer([&] {
-        return vbox({
-                 text("Four Digits (v0.6.0)") | center | color(Color::LightSkyBlue1),
-                 separator(),
-                 text("Coded by DenisMasterHerobrine (also known as DMHDev, Denis Kalashnikov). Licensed under MIT License.") | center | color(Color::White),
-                 text("") | center,
-                 text("Music: Dread Factory by MFG38 from DOOMWorld's Ultimate MIDI Pack by northivanastan") | center | color(Color::DarkRedBis),
-                 text("") | center,
-                 text("Sources: https://github.com/DenisMasterHerobrine/4digits") | center | color(Color::GrayLight),
-                 text("") | center,
-                 text("") | center,
-                 text("") | center,
-                 text("Press G to go to GitHub page.") | center | color(Color::GrayLight),
-                 text("Press M to go to music's author page.") | center | color(Color::DarkRedBis),
-                 text("Press ENTER to leave Credits menu.") | center | color(Color::White),
+auto rendererCredits = Renderer([&] {
+    return vbox({
+             text("Four Digits (v0.6.0)") | center | color(Color::LightSkyBlue1),
+             separator(),
+             text("Coded by DenisMasterHerobrine (also known as DMHDev, Denis Kalashnikov). Licensed under MIT License.") | center | color(Color::White),
+             text("") | center,
+             text("Music: Dread Factory by MFG38 from DOOMWorld's Ultimate MIDI Pack by northivanastan") | center | color(Color::DarkRedBis),
+             text("") | center,
+             text("Sources: https://github.com/DenisMasterHerobrine/4digits") | center | color(Color::GrayLight),
+             text("") | center,
+             text("") | center,
+             text("") | center,
+             text("Press G to go to GitHub page.") | center | color(Color::GrayLight),
+             text("Press M to go to music's author page.") | center | color(Color::DarkRedBis),
+             text("Press ENTER to leave Credits menu.") | center | color(Color::White),
         }) | border | bgcolor(Color::MediumPurple4);
     });
 
-    auto componentGuessing = CatchEvent(rendererGuessing, [&](Event event) {
-        if (event == Event::Character('\n')) {
-            errorCodeTurn = "BEGIN_CHECK";
-            char* arrayCode = new char{};
-            strcpy(arrayCode, userTurnCode.c_str());
-            char* errorCodeType = isValidCode(arrayCode);
-            errorCodeTurn = errorCodeType;
+auto rendererWin = Renderer([&] {
+    return vbox({
+             text("Four Digits - Victory!") | center | color(Color::LightSkyBlue1),
+             separator(),
+             text("You win!") | center | color(Color::Green3Bis),
+             text("Press ENTER to go back to Main Menu.") | center | color(Color::White),
+        }) | border | bgcolor(Color::MediumPurple4);
+    });
 
-            if (errorCodeTurn == "") {
-                userTurnCodes.push_back(userTurnCode);
-                userTurnCode = "";
-            }
-            else {
-                userTurnCode = "ERROR: " + std::string(errorCodeType);
-            }
-            return true;
-        }
+auto componentWin = CatchEvent(rendererWin, [&](Event event) {
+    if (event == Event::Character('\n')) {
+        isEnded = true;
+        screen.ExitLoopClosure()();
+        return true;
+    }
 
-        return false;
-        }
-    );
+    return false;
+    }
+);
 
-    auto componentGame = CatchEvent(rendererGame, [&](Event event) {
-        if (event == Event::Character('\n')) {
-            errorCode = "BEGIN_CHECK";
-            char* arrayCode = new char{};
-            strcpy(arrayCode, code.c_str());
-            char* errorCodeType = isUniqueHiddenCode(arrayCode);
-            errorCode = errorCodeType;
+auto componentGuessing = CatchEvent(rendererGuessing, [&](Event event) {
+    if (event == Event::Character('\n')) {
+        errorCodeTurn = "BEGIN_CHECK";
+        char* arrayCode = new char{};
+        strcpy(arrayCode, userTurnCode.c_str());
+        char* errorCodeType = isValidCode(arrayCode);
+        errorCodeTurn = errorCodeType;
 
-            if (errorCode == "") {
-                if (userTurnCodes.size() > 0) userTurnCodes.clear();
+        if (errorCodeTurn == "") {
+            userTurnCodes.push_back(userTurnCode);
+            turnCodesDecorator(userTurnCodes, code, encryptedUserTurnCodes);
+            if (contains("4B0C", encryptedUserTurnCodes)) {
                 screen.ExitLoopClosure()();
-                screen.Loop(componentGuessing);
+                screen.Loop(componentWin);
             }
-            return true;
+            userTurnCode = "";
+
         }
-
-        return false;
+        else {
+            userTurnCode = "ERROR: " + std::string(errorCodeType);
         }
-    );
+        return true;
+    }
 
-    auto componentCredits = CatchEvent(rendererCredits, [&](Event event) {
-        if (event == Event::Character('\n')) {
-          screen.ExitLoopClosure()();
-          return true;
+    return false;
+    }
+);
+
+auto componentGame = CatchEvent(rendererGame, [&](Event event) {
+    if (event == Event::Character('\n')) {
+        errorCode = "BEGIN_CHECK";
+        char* arrayCode = new char{};
+        strcpy(arrayCode, code.c_str());
+        char* errorCodeType = isUniqueHiddenCode(arrayCode);
+        errorCode = errorCodeType;
+
+        if (errorCode == "") {
+            if (userTurnCodes.size() > 0) userTurnCodes.clear();
+            screen.ExitLoopClosure()();
+            screen.Loop(componentGuessing);
         }
+        return true;
+    }
 
-        if (event == Event::Character('G') || event == Event::Character('g')) {
-            const std::string& link = "https://github.com/DenisMasterHerobrine/4digits";
-            executeLink(link);
-          return true;
-        }
+    return false;
+    }
+);
 
-        if (event == Event::Character('M') || event == Event::Character('m')) {
-            const std::string& link = "https://www.doomworld.com/forum/topic/120788-released-ultimate-midi-pack-a-community-music-replacement-for-the-original-doom/";
-            executeLink(link);
-            return true;
-        }
-      return false;
-      }
-  );
+auto componentCredits = CatchEvent(rendererCredits, [&](Event event) {
+    if (event == Event::Character('\n')) {
+        screen.ExitLoopClosure()();
+        return true;
+    }
 
-  auto component = CatchEvent(renderer, [&](Event event) {
-      if (event == Event::Character('\n') && selected == 0) {
-          screen.ExitLoopClosure()();
-          screen.Loop(componentGame);
+    if (event == Event::Character('G') || event == Event::Character('g')) {
+        const std::string& link = "https://github.com/DenisMasterHerobrine/4digits";
+        executeLink(link);
+        return true;
+    }
 
-          return true;
-      }
+    if (event == Event::Character('M') || event == Event::Character('m')) {
+        const std::string& link = "https://www.doomworld.com/forum/topic/120788-released-ultimate-midi-pack-a-community-music-replacement-for-the-original-doom/";
+        executeLink(link);
+        return true;
+    }
+    return false;
+    }
+);
 
-      if (event == Event::Character('\n') && selected == 1) {
-          screen.ExitLoopClosure()();
-          screen.Loop(componentGame);
+auto component = CatchEvent(renderer, [&](Event event) {
+    isEnded = false;
+    if (event == Event::Character('\n') && selected == 0) {
+        screen.ExitLoopClosure()();
+        userTurnCode = "";
+        screen.Loop(componentGame);
 
-          return true;
-      }
+        return true;
+    }
 
-      if (event == Event::Character('\n') && selected == 3) {
-          screen.ExitLoopClosure()();
-          screen.Loop(componentCredits);
+    if (event == Event::Character('\n') && selected == 1) {
+        screen.ExitLoopClosure()();
+        screen.Loop(componentGame);
 
-          return true;
-      }
+        return true;
+    }
 
-      if (event == Event::Character('\n') && selected == 4) {
-          screen.ExitLoopClosure()();
-          return true;
-      }
-      return false;
-      }
-  );
+    if (event == Event::Character('\n') && selected == 3) {
+        screen.ExitLoopClosure()();
+        screen.Loop(componentCredits);
+
+        return true;
+    }
+
+    if (event == Event::Character('\n') && selected == 4) {
+        screen.ExitLoopClosure()();
+        return true;
+    }
+    return false;
+    }
+);
+
+int main(int argc, const char* argv[]) {
+  setWindowName(name);
+  
+  std::thread AsyncLanguageLayoutChangeThread{
+      setEnglishLocale
+  };
+  AsyncLanguageLayoutChangeThread.native_handle();
 
   playMainMenuMusic(); // Start a main menu music loop, initialize the sound engine.
+
+  componentWin = CatchEvent(rendererWin, [&](Event event) {
+      if (event == Event::Character('\n')) {
+          isEnded = true;
+          screen.ExitLoopClosure()();
+          screen.Loop(component);
+          return true;
+      }
+
+      return false;
+      }
+  );
 
   screen.Loop(component);
 

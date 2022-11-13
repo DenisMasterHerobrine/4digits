@@ -9,6 +9,6 @@ char* isUniqueHiddenCode(const char*);
 
 char* isValidCode(const char*);
 
-std::string turnCodesDecorator(std::vector<std::string>, std::string);
+std::string turnCodesDecorator(std::vector<std::string> v, std::string keyCode, std::vector<std::string>& v2);
 
-std::vector<std::string> encodeVector(std::vector<std::string> v, std::string, std::string);
+std::vector<std::string> encodeVector(std::vector<std::string>, std::string, std::string);

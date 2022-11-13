@@ -14,7 +14,6 @@
 // Four Digits headers.
 #include <Utilities.h> // for in-game music interaction, playing/disabling sounds, doing some abstract stuff not related to the game.
 #include <4DigitsAPI.h> // for game entrypoint callback and the whole game logic being processed on launcher's state.
-
 using namespace ftxui;
 
 const std::string& name = "Four Digits";
@@ -157,32 +156,31 @@ auto componentGuessing = CatchEvent(rendererGuessing, [&](Event event) {
     if (event == Event::Character('\n')) {
         errorCodeTurn = "BEGIN_CHECK";
         // Check User's code to check if it's valid or not.
-        char* arrayCode = new char{};
-        strcpy(arrayCode, userTurnCode.c_str());
-        char* errorCodeType = isValidCode(arrayCode);
+        char* errorCodeType = isValidCode(userTurnCode.c_str());
         errorCodeTurn = errorCodeType;
 
         // If it's valid -> generate a computer's turn and do checks.
         if (errorCodeTurn == "") {
+            
             // Generate a computer's one.
             while (computerTurnCode.size() != 4) {
-                computerTurnCode = generateHiddenCode();
-                if (!excludedErastophenChars.empty()) {
-                    if (contains(computerTurnCode[0], excludedErastophenChars) 
-                        || contains(computerTurnCode[1], excludedErastophenChars) 
-                        || contains(computerTurnCode[2], excludedErastophenChars) 
-                        || contains(computerTurnCode[3], excludedErastophenChars)) {
-                        computerTurnCode.clear();
-                    } 
+                if (excludedErastophenChars.size() == 6) {
+                    computerTurnCode = generateErastophenCode(excludedErastophenChars);
+                }
+                else {
+                    computerTurnCode = generateHiddenCode();
                 }
             }
-
-            char* arrayComputerCode = new char{};
-            strcpy(arrayComputerCode, computerTurnCode.c_str());
 
             userTurnCodes.push_back(userTurnCode);
             turnCodesDecorator(userTurnCodes, computerCode, encryptedUserTurnCodes);
             if (contains("4B0C", encryptedUserTurnCodes)) {
+                userTurnCodes.clear();
+                userTurnCodes.shrink_to_fit();
+                computerTurnCodes.clear();
+                computerTurnCodes.shrink_to_fit();
+                excludedErastophenChars.clear();
+                excludedErastophenChars.shrink_to_fit();
                 screen.ExitLoopClosure()();
                 screen.Loop(componentWin);
             }
@@ -190,8 +188,14 @@ auto componentGuessing = CatchEvent(rendererGuessing, [&](Event event) {
 
             computerTurnCodes.push_back(computerTurnCode);
             turnCodesDecorator(computerTurnCodes, code, encryptedComputerTurnCodes);
-            bool e = updateErastophenVector(code, computerTurnCode, excludedErastophenChars);
+            if (excludedErastophenChars.size() < 6) updateErastophenVector(code, computerTurnCode, excludedErastophenChars);
             if (contains("4B0C", encryptedComputerTurnCodes)) {
+                userTurnCodes.clear();
+                userTurnCodes.shrink_to_fit();
+                computerTurnCodes.clear();
+                computerTurnCodes.shrink_to_fit();
+                excludedErastophenChars.clear();
+                excludedErastophenChars.shrink_to_fit();
                 screen.ExitLoopClosure()();
                 screen.Loop(componentLose);
             }
@@ -199,11 +203,10 @@ auto componentGuessing = CatchEvent(rendererGuessing, [&](Event event) {
 
         }
         else {
-            userTurnCode = "ERROR: " + std::string(errorCodeType);
+            userTurnCode = "ERROR: " + std::string(errorCodeTurn);
         }
         return true;
     }
-
     return false;
     }
 );
@@ -211,9 +214,7 @@ auto componentGuessing = CatchEvent(rendererGuessing, [&](Event event) {
 auto componentGame = CatchEvent(rendererGame, [&](Event event) {
     if (event == Event::Character('\n')) {
         errorCode = "BEGIN_CHECK";
-        char* arrayCode = new char{};
-        strcpy(arrayCode, code.c_str());
-        char* errorCodeType = isUniqueHiddenCode(arrayCode);
+        char* errorCodeType = isUniqueHiddenCode(code.c_str());
         errorCode = errorCodeType;
 
         if (errorCode == "") {

@@ -60,7 +60,7 @@ void setEnglishLocale() {
 // Checks if an array contains a specified value. Alternative to std::find (which is preffered), since std::find returns last element, while it is not expected in game code.
 bool contains(const std::string& value, const std::vector<std::string>& array)
 {
-    for (int i = 0; i < array.size(); ++i) {
+    for (int i = 0; i < array.size(); i++) {
         if (array[i] == value) {
             return true;
         }
@@ -71,7 +71,7 @@ bool contains(const std::string& value, const std::vector<std::string>& array)
 // Checks if an array contains a specified value. Alternative to std::find (which is preffered), since std::find returns last element, while it is not expected in game code.
 bool contains(const char& value, const std::vector<char>& array)
 {
-    for (int i = 0; i < array.size(); ++i) {
+    for (int i = 0; i < array.size(); i++) {
         if (array[i] == value) {
             return true;
         }
@@ -82,7 +82,7 @@ bool contains(const char& value, const std::vector<char>& array)
 // Checks if an array contains a specified value. Alternative to std::find (which is preffered), since std::find returns last element, while it is not expected in game code.
 bool contains(const char& value, const std::string& array)
 {
-    for (int i = 0; i < array.size(); ++i) {
+    for (int i = 0; i < array.size(); i++) {
         if (array[i] == value) {
             return true;
         }

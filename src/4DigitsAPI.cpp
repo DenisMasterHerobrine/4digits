@@ -49,7 +49,6 @@ char* isUniqueHiddenCode(const char* code) {
 		errorCode = "NOT_UNIQUE_NUMBERS_IN_CODE"; // Not a valid code, but our numbers are not unique and distinct.
 		return errorCode;
 	}
-
 	return "SKIPPED_CHECKS";
 }
 
@@ -74,7 +73,6 @@ char* isValidCode(const char* code) {
 	}
 
 	errorCode = ""; // Return nothing if we're fine.
-
 	return errorCode;
 }
 
@@ -145,22 +143,19 @@ std::string turnCodesDecorator(std::vector<std::string> v, std::string keyCode, 
 	return res;
 }
 
-bool updateErastophenVector(std::string key, std::string code, std::vector<char>& erastophenVector) {
+void updateErastophenVector(std::string key, std::string code, std::vector<char>& erastophenVector) {
 	if (key.size() == 4 && code.size() == 4) {
 		// Get hidden code keys;
 		char firstKey = code[0];
 		char secondKey = code[1];
 		char thirdKey = code[2];
 		char fourthKey = code[3];
-
+		
 		if (!contains(firstKey, key) && !contains(firstKey, erastophenVector)) erastophenVector.push_back(firstKey);
 		if (!contains(secondKey, key) && !contains(secondKey, erastophenVector)) erastophenVector.push_back(secondKey);
 		if (!contains(thirdKey, key) && !contains(thirdKey, erastophenVector)) erastophenVector.push_back(thirdKey);
 		if (!contains(fourthKey, key) && !contains(fourthKey, erastophenVector)) erastophenVector.push_back(fourthKey);
-		
-		return true;
 	}
-	else return false;
 }
 
 // Checks if in generated code all chars are unique (do not misuse with unordered_set's unification)
@@ -182,7 +177,7 @@ bool uniqueCharacters(std::string str)
 }
 
 // Generates a hidden code using "Memory and Time Salting" (MaTS) algorithm.
-const char* generateHiddenCode() {
+std::string generateHiddenCode() {
 	srand(static_cast<int>(getSeed())); // time(0) causes here a huge memory leak, wtf.
 	char* arrayCode = new char{};
 	bool unique = false;
@@ -194,5 +189,38 @@ const char* generateHiddenCode() {
 	} while (!unique);
 
 	return arrayCode;
-	delete arrayCode;
+}
+
+// Generates a hidden code using "Memory and Time Salting" (MaTS) algorithm and Erastophen strategy generated during game.
+std::string generateErastophenCode(std::vector<char>& array) {
+	srand(static_cast<int>(getSeed()));
+	
+	std::vector<char> c = {'0','1','2','3','4','5','6','7','8','9'};
+
+	std::string code{};
+
+	for (int i = 0; i < 6; i++) {
+		int d = c.size();
+		c.erase(std::remove(c.begin(), c.end(), std::stoi(std::to_string(array[i]))), c.end());
+	}
+
+	int j = rand() % 4;
+	code = code + c[j];
+	c.erase(c.begin() + j);
+
+	j = rand() % 3;
+	code = code + c[j];
+	c.erase(c.begin() + j);
+
+	j = rand() % 2;
+	code = code + c[j];
+	c.erase(c.begin() + j);
+
+	code = code + c[0];
+	c.erase(c.begin());
+
+	c.clear();
+	c.shrink_to_fit();
+
+	return code;
 }

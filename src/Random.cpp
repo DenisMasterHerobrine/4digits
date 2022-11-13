@@ -67,8 +67,9 @@ unsigned int getSeed()
 	intSeed = std::stoi(prepSeed);
 
 	unsigned int saltedRandom = intSeed;
-
-	delete[] abstractMemorySalt;
+	delete abstractMemorySalt;
+	seed = "0";
+	prepSeed = seed;
 
 	return saltedRandom;
 }

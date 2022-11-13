@@ -10,8 +10,8 @@ FILETYPE 0x1
     {
         BLOCK "040904E4"
         {
-            VALUE "CompanyName", "DMHDevelopment\0"
-                VALUE "FileDescription", "Four Digits Launcher executable to launch the game.\0"
+                VALUE "CompanyName", "DMHDevelopment\0"
+                VALUE "FileDescription", "Four Digits Game\0"
                 VALUE "FileVersion", "0.6.0.10\0"
                 VALUE "ProductName", "Four Digits\0"
                 VALUE "InternalName", "Four Digits\0"

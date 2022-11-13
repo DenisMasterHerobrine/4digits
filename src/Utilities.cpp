@@ -57,6 +57,7 @@ void setEnglishLocale() {
     SendMessageW(HWND_BROADCAST, WM_INPUTLANGCHANGEREQUEST, 0, reinterpret_cast<LPARAM>(LoadKeyboardLayoutA("00000409", KLF_ACTIVATE | KLF_SETFORPROCESS)));
 }
 
+// Checks if an array contains a specified value. Alternative to std::find (which is preffered), since std::find returns last element, while it is not expected in game code.
 bool contains(const std::string& value, const std::vector<std::string>& array)
 {
     for (int i = 0; i < array.size(); ++i) {

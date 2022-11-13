@@ -117,7 +117,27 @@ auto rendererWin = Renderer([&] {
         }) | border | bgcolor(Color::MediumPurple4);
     });
 
+auto rendererLose = Renderer([&] {
+    return vbox({
+             text("Four Digits - Victory!") | center | color(Color::LightSkyBlue1),
+             separator(),
+             text("You lost!") | center | color(Color::Red3Bis),
+             text("Press ENTER to go back to Main Menu.") | center | color(Color::White),
+        }) | border | bgcolor(Color::MediumPurple4);
+    });
+
 auto componentWin = CatchEvent(rendererWin, [&](Event event) {
+    if (event == Event::Character('\n')) {
+        isEnded = true;
+        screen.ExitLoopClosure()();
+        return true;
+    }
+
+    return false;
+    }
+);
+
+auto componentLose = CatchEvent(rendererWin, [&](Event event) {
     if (event == Event::Character('\n')) {
         isEnded = true;
         screen.ExitLoopClosure()();
@@ -198,7 +218,6 @@ auto componentCredits = CatchEvent(rendererCredits, [&](Event event) {
 );
 
 auto component = CatchEvent(renderer, [&](Event event) {
-    isEnded = false;
     if (event == Event::Character('\n') && selected == 0) {
         screen.ExitLoopClosure()();
         userTurnCode = "";
@@ -241,7 +260,17 @@ int main(int argc, const char* argv[]) {
 
   componentWin = CatchEvent(rendererWin, [&](Event event) {
       if (event == Event::Character('\n')) {
-          isEnded = true;
+          screen.ExitLoopClosure()();
+          screen.Loop(component);
+          return true;
+      }
+
+      return false;
+      }
+  );
+
+  componentLose = CatchEvent(rendererWin, [&](Event event) {
+      if (event == Event::Character('\n')) {
           screen.ExitLoopClosure()();
           screen.Loop(component);
           return true;

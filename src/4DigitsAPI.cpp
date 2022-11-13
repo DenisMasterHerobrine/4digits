@@ -129,14 +129,13 @@ std::vector<std::string> encodeVector(std::vector<std::string> v, std::string en
 std::string turnCodesDecorator(std::vector<std::string> v, std::string keyCode, std::vector<std::string>& v2) {
 	int n = v.size();
 	std::string errorCode{};
-	v = encodeVector(v, keyCode, errorCode);
-	v2 = v;
+	v2 = encodeVector(v, keyCode, errorCode);
 
 	std::string res{};
 	for (int i = 0; i < n; i++) {
-		if (!(i == n - 1)) res += "Turn " + std::to_string(i + 1) + ": " + v[i] + "; \n";
+		if (!(i == n - 1)) res += "Turn " + std::to_string(i + 1) + ": " + v2[i] + + " (" + v[i] + "); \n";
 		else {
-			res += "Turn " + std::to_string(i + 1) + ": " + v[i] + ".";
+			res += "Turn " + std::to_string(i + 1) + ": " + v2[i] + " (" + v[i] + ").";
 		}
 	}
 

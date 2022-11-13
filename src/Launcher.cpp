@@ -96,6 +96,21 @@ auto rendererGuessing = Renderer(componentInputTurn, [&] {
         border | bgcolor(Color::MediumPurple4);
     });
 
+auto rendererHowToPlay = Renderer([&] {
+    return vbox({
+             text("Four Digits - How to Play?") | center | color(Color::LightSkyBlue1),
+             separator(),
+             paragraph("There are 2 players. You and Computer. You and Computer create a 4-digit code that the opponent needs to solve.") | center | color(Color::White),
+             paragraph("After entering the code to guess, the game begins. Now you need to try to guess the opponent's code by entering codes into the field.") | center | color(Color::White),
+             paragraph("Once you've entered it, the result appear in the bottom, you'll get an output as `Bulls (B) and Cows (C)` encoded code with original code in brackets.") | center | color(Color::White),
+             paragraph("Bull (B) counter means that the N numbers are correct and staying on the same place as in the opponent's code.") | center | color(Color::White),
+             paragraph("Cows (C) counter means that the N numbers are containing in the opponent's code, but they're are not on the same place as in the opponent's code.") | center | color(Color::White),
+             paragraph("The first player, who solves the opponent's code faster, is won.") | center | color(Color::White),
+             text("") | center,
+             text("Press ENTER to leave Credits menu.") | center | color(Color::White),
+        }) | border | bgcolor(Color::MediumPurple4);
+    });
+
 auto rendererCredits = Renderer([&] {
     return vbox({
              text("Four Digits (v0.6.0)") | center | color(Color::LightSkyBlue1),
@@ -233,6 +248,16 @@ auto componentGame = CatchEvent(rendererGame, [&](Event event) {
     }
 );
 
+auto componentHowToPlay = CatchEvent(rendererHowToPlay, [&](Event event) {
+    if (event == Event::Character('\n')) {
+        screen.ExitLoopClosure()();
+        return true;
+    }
+
+    return false;
+    }
+);
+
 auto componentCredits = CatchEvent(rendererCredits, [&](Event event) {
     if (event == Event::Character('\n')) {
         screen.ExitLoopClosure()();
@@ -265,7 +290,7 @@ auto component = CatchEvent(renderer, [&](Event event) {
 
     if (event == Event::Character('\n') && selected == 1) {
         screen.ExitLoopClosure()();
-        screen.Loop(componentGame);
+        screen.Loop(componentHowToPlay);
 
         return true;
     }

@@ -52,7 +52,7 @@ unsigned int getSeed()
 
 	srand(time(0));
 
-	for (int i = 1; i < rand() % 25; i++) {
+	for (int i = 1; i < rand() % 5; i++) {
 		abstractMemorySaltString += std::to_string(abstractMemorySalt[i]); // Ignore the warning, we need total randomness!
 	}
 
@@ -67,6 +67,8 @@ unsigned int getSeed()
 	intSeed = std::stoi(prepSeed);
 
 	unsigned int saltedRandom = intSeed;
+
+	delete[] abstractMemorySalt;
 
 	return saltedRandom;
 }

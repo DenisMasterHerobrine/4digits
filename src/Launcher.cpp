@@ -31,6 +31,8 @@ std::string errorCode{}, errorCodeTurn{};
 std::vector<std::string> computerTurnCodes{};
 std::vector<std::string> userTurnCodes{};
 
+std::vector<char> excludedErastophenChars{};
+
 std::vector<std::string> encryptedComputerTurnCodes{};
 std::vector<std::string> encryptedUserTurnCodes{};
 
@@ -163,7 +165,18 @@ auto componentGuessing = CatchEvent(rendererGuessing, [&](Event event) {
         // If it's valid -> generate a computer's turn and do checks.
         if (errorCodeTurn == "") {
             // Generate a computer's one.
-            computerTurnCode = generateHiddenCode();
+            while (computerTurnCode.size() != 4) {
+                computerTurnCode = generateHiddenCode();
+                if (!excludedErastophenChars.empty()) {
+                    if (contains(computerTurnCode[0], excludedErastophenChars) 
+                        || contains(computerTurnCode[1], excludedErastophenChars) 
+                        || contains(computerTurnCode[2], excludedErastophenChars) 
+                        || contains(computerTurnCode[3], excludedErastophenChars)) {
+                        computerTurnCode.clear();
+                    } 
+                }
+            }
+
             char* arrayComputerCode = new char{};
             strcpy(arrayComputerCode, computerTurnCode.c_str());
 
@@ -177,7 +190,7 @@ auto componentGuessing = CatchEvent(rendererGuessing, [&](Event event) {
 
             computerTurnCodes.push_back(computerTurnCode);
             turnCodesDecorator(computerTurnCodes, code, encryptedComputerTurnCodes);
-            std::vector<std::string> s = encryptedComputerTurnCodes;
+            bool e = updateErastophenVector(code, computerTurnCode, excludedErastophenChars);
             if (contains("4B0C", encryptedComputerTurnCodes)) {
                 screen.ExitLoopClosure()();
                 screen.Loop(componentLose);
@@ -207,7 +220,7 @@ auto componentGame = CatchEvent(rendererGame, [&](Event event) {
             if (userTurnCodes.size() > 0) userTurnCodes.clear();
             if (computerTurnCodes.size() > 0) computerTurnCodes.clear();
 
-            computerCode = generateHiddenCode(); // Generate a hidden code that player needs to find out.
+            computerCode = generateHiddenCode();
 
             screen.ExitLoopClosure()();
             screen.Loop(componentGuessing);

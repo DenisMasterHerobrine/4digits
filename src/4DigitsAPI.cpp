@@ -8,15 +8,7 @@
 #include <time.h>
 #include <vector>
 #include <unordered_set>
-
-// Generates a hidden code using "Memory and Time Salting" (MaTS) algorithm.
-const char* generateHiddenCode() {
-	srand(static_cast<int>(getSeed()));
-	int code = 1000 + rand() % 10000;
-	char* arrayCode = new char{};
-	strcpy(arrayCode, std::to_string(code).c_str());
-	return arrayCode;
-}
+#include <Utilities.h>
 
 // Checks if player's hidden code is unique and all numbers in the code are not the same.
 char* isUniqueHiddenCode(const char* code) {
@@ -151,4 +143,56 @@ std::string turnCodesDecorator(std::vector<std::string> v, std::string keyCode, 
 	}
 
 	return res;
+}
+
+bool updateErastophenVector(std::string key, std::string code, std::vector<char>& erastophenVector) {
+	if (key.size() == 4 && code.size() == 4) {
+		// Get hidden code keys;
+		char firstKey = code[0];
+		char secondKey = code[1];
+		char thirdKey = code[2];
+		char fourthKey = code[3];
+
+		if (!contains(firstKey, key) && !contains(firstKey, erastophenVector)) erastophenVector.push_back(firstKey);
+		if (!contains(secondKey, key) && !contains(secondKey, erastophenVector)) erastophenVector.push_back(secondKey);
+		if (!contains(thirdKey, key) && !contains(thirdKey, erastophenVector)) erastophenVector.push_back(thirdKey);
+		if (!contains(fourthKey, key) && !contains(fourthKey, erastophenVector)) erastophenVector.push_back(fourthKey);
+		
+		return true;
+	}
+	else return false;
+}
+
+// Checks if in generated code all chars are unique (do not misuse with unordered_set's unification)
+bool uniqueCharacters(std::string str)
+{
+	// If at any time we encounter 2
+	// same characters, return false
+	for (int i = 0; i < str.length() - 1; i++) {
+		for (int j = i + 1; j < str.length(); j++) {
+			if (str[i] == str[j]) {
+				return false;
+			}
+		}
+	}
+
+	// If no duplicate characters encountered,
+	// return true
+	return true;
+}
+
+// Generates a hidden code using "Memory and Time Salting" (MaTS) algorithm.
+const char* generateHiddenCode() {
+	srand(static_cast<int>(getSeed())); // time(0) causes here a huge memory leak, wtf.
+	char* arrayCode = new char{};
+	bool unique = false;
+
+	do {
+		int code = 1000 + rand() % 10000;
+		strcpy(arrayCode, std::to_string(code).c_str());
+		unique = uniqueCharacters(std::to_string(code));
+	} while (!unique);
+
+	return arrayCode;
+	delete arrayCode;
 }

@@ -21,12 +21,17 @@ const std::string& name = "Four Digits";
 
 auto screen = ScreenInteractive::Fullscreen();
 
-bool isEnded{};
 std::string code{};
+std::string computerCode{};
+
 std::string userTurnCode{};
+std::string computerTurnCode{};
 std::string errorCode{}, errorCodeTurn{};
 
+std::vector<std::string> computerTurnCodes{};
 std::vector<std::string> userTurnCodes{};
+
+std::vector<std::string> encryptedComputerTurnCodes{};
 std::vector<std::string> encryptedUserTurnCodes{};
 
 Component inputUserCode = Input(&code, "Guess the code for the computer.");
@@ -82,9 +87,9 @@ auto rendererGuessing = Renderer(componentInputTurn, [&] {
            vbox(text(" Your Turn: "), inputUserTurnCode->Render()) | frame,
            separator(),
            hbox({
-           vbox(text(" User's Output: "), paragraph(turnCodesDecorator(userTurnCodes, code, encryptedUserTurnCodes))),
+           vbox(text(" User's Output: "), paragraph(turnCodesDecorator(userTurnCodes, computerCode, encryptedUserTurnCodes))),
            separator(),
-           vbox(text(" Computer's Output: "), text(errorCode)) | frame,
+           vbox(text(" Computer's Output: "), paragraph(turnCodesDecorator(computerTurnCodes, code, encryptedComputerTurnCodes))) | frame,
            }),
         }) |
         border | bgcolor(Color::MediumPurple4);
@@ -119,7 +124,7 @@ auto rendererWin = Renderer([&] {
 
 auto rendererLose = Renderer([&] {
     return vbox({
-             text("Four Digits - Victory!") | center | color(Color::LightSkyBlue1),
+             text("Four Digits - Loss!") | center | color(Color::LightSkyBlue1),
              separator(),
              text("You lost!") | center | color(Color::Red3Bis),
              text("Press ENTER to go back to Main Menu.") | center | color(Color::White),
@@ -128,7 +133,6 @@ auto rendererLose = Renderer([&] {
 
 auto componentWin = CatchEvent(rendererWin, [&](Event event) {
     if (event == Event::Character('\n')) {
-        isEnded = true;
         screen.ExitLoopClosure()();
         return true;
     }
@@ -139,7 +143,6 @@ auto componentWin = CatchEvent(rendererWin, [&](Event event) {
 
 auto componentLose = CatchEvent(rendererWin, [&](Event event) {
     if (event == Event::Character('\n')) {
-        isEnded = true;
         screen.ExitLoopClosure()();
         return true;
     }
@@ -151,12 +154,19 @@ auto componentLose = CatchEvent(rendererWin, [&](Event event) {
 auto componentGuessing = CatchEvent(rendererGuessing, [&](Event event) {
     if (event == Event::Character('\n')) {
         errorCodeTurn = "BEGIN_CHECK";
+        // Check User's code to check if it's valid or not.
         char* arrayCode = new char{};
         strcpy(arrayCode, userTurnCode.c_str());
         char* errorCodeType = isValidCode(arrayCode);
         errorCodeTurn = errorCodeType;
 
+        // If it's valid -> generate a computer's turn and do checks.
         if (errorCodeTurn == "") {
+            // Generate a computer's one.
+            computerTurnCode = generateHiddenCode();
+            char* arrayComputerCode = new char{};
+            strcpy(arrayComputerCode, computerTurnCode.c_str());
+
             userTurnCodes.push_back(userTurnCode);
             turnCodesDecorator(userTurnCodes, code, encryptedUserTurnCodes);
             if (contains("4B0C", encryptedUserTurnCodes)) {
@@ -164,6 +174,14 @@ auto componentGuessing = CatchEvent(rendererGuessing, [&](Event event) {
                 screen.Loop(componentWin);
             }
             userTurnCode = "";
+
+            computerTurnCodes.push_back(computerTurnCode);
+            turnCodesDecorator(computerTurnCodes, computerCode, encryptedComputerTurnCodes);
+            if (contains("4B0C", encryptedComputerTurnCodes)) {
+                screen.ExitLoopClosure()();
+                screen.Loop(componentLose);
+            }
+            computerTurnCode = ""; 
 
         }
         else {
@@ -186,6 +204,10 @@ auto componentGame = CatchEvent(rendererGame, [&](Event event) {
 
         if (errorCode == "") {
             if (userTurnCodes.size() > 0) userTurnCodes.clear();
+            if (computerTurnCodes.size() > 0) computerTurnCodes.clear();
+
+            computerCode = generateHiddenCode(); // Generate a hidden code that player needs to find out.
+
             screen.ExitLoopClosure()();
             screen.Loop(componentGuessing);
         }
@@ -241,7 +263,7 @@ auto component = CatchEvent(renderer, [&](Event event) {
     }
 
     if (event == Event::Character('\n') && selected == 4) {
-        screen.ExitLoopClosure()();
+        exit(EXIT_SUCCESS);
         return true;
     }
     return false;
@@ -249,12 +271,17 @@ auto component = CatchEvent(renderer, [&](Event event) {
 );
 
 int main(int argc, const char* argv[]) {
+  // Remove alert() dialog box on Windows, since we don't need it whatsoever. If something really bad happens, create a .log file and write the error.
+  _set_abort_behavior(0, _WRITE_ABORT_MSG); 
+
+  // Setting command line box name here, it's "Four Digits".
   setWindowName(name);
   
+  // Do asynchronous task to Windows API to change our keyboard's language layout to English (US) in case we have non-English layout to work properly.
   std::thread AsyncLanguageLayoutChangeThread{
       setEnglishLocale
   };
-  AsyncLanguageLayoutChangeThread.native_handle();
+  AsyncLanguageLayoutChangeThread.native_handle(); 
 
   playMainMenuMusic(); // Start a main menu music loop, initialize the sound engine.
 

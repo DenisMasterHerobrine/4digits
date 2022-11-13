@@ -16,7 +16,6 @@ const char* generateHiddenCode() {
 	char* arrayCode = new char{};
 	strcpy(arrayCode, std::to_string(code).c_str());
 	return arrayCode;
-	delete[] arrayCode;
 }
 
 // Checks if player's hidden code is unique and all numbers in the code are not the same.

@@ -23,7 +23,7 @@ project(4digits-launcher
 )
 
 set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/4digits.rc")
-add_executable(4digits-launcher "src/Launcher.cpp" ${APP_ICON_RESOURCE_WINDOWS}  "src/Utilities.h" "src/4DigitsAPI.h" "src/4DigitsAPI.cpp" "src/Utilities.cpp")
+add_executable(4digits-launcher "src/Launcher.cpp" ${APP_ICON_RESOURCE_WINDOWS} "src/Utilities.h" "src/4DigitsAPI.h" "src/4DigitsAPI.cpp" "src/Utilities.cpp")
 target_include_directories(4digits-launcher PRIVATE src)
 
 target_link_libraries(4digits-launcher

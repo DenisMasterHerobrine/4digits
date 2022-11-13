@@ -269,7 +269,7 @@ int main(int argc, const char* argv[]) {
       }
   );
 
-  componentLose = CatchEvent(rendererWin, [&](Event event) {
+  componentLose = CatchEvent(rendererLose, [&](Event event) {
       if (event == Event::Character('\n')) {
           screen.ExitLoopClosure()();
           screen.Loop(component);

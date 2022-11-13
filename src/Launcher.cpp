@@ -89,7 +89,7 @@ auto rendererGuessing = Renderer(componentInputTurn, [&] {
            hbox({
            vbox(text(" User's Output: "), paragraph(turnCodesDecorator(userTurnCodes, computerCode, encryptedUserTurnCodes))),
            separator(),
-           vbox(text(" Computer's Output: "), paragraph(turnCodesDecorator(computerTurnCodes, code, encryptedComputerTurnCodes))) | frame,
+           vbox(text(" Computer's Output: "), paragraph(turnCodesDecorator(computerTurnCodes, code, encryptedComputerTurnCodes))),
            }),
         }) |
         border | bgcolor(Color::MediumPurple4);
@@ -126,7 +126,7 @@ auto rendererLose = Renderer([&] {
     return vbox({
              text("Four Digits - Loss!") | center | color(Color::LightSkyBlue1),
              separator(),
-             text("You lost!") | center | color(Color::Red3Bis),
+             text("You lost! Computer solved your code faster than you...") | center | color(Color::DarkRedBis),
              text("Press ENTER to go back to Main Menu.") | center | color(Color::White),
         }) | border | bgcolor(Color::MediumPurple4);
     });
@@ -168,7 +168,7 @@ auto componentGuessing = CatchEvent(rendererGuessing, [&](Event event) {
             strcpy(arrayComputerCode, computerTurnCode.c_str());
 
             userTurnCodes.push_back(userTurnCode);
-            turnCodesDecorator(userTurnCodes, code, encryptedUserTurnCodes);
+            turnCodesDecorator(userTurnCodes, computerCode, encryptedUserTurnCodes);
             if (contains("4B0C", encryptedUserTurnCodes)) {
                 screen.ExitLoopClosure()();
                 screen.Loop(componentWin);
@@ -176,7 +176,8 @@ auto componentGuessing = CatchEvent(rendererGuessing, [&](Event event) {
             userTurnCode = "";
 
             computerTurnCodes.push_back(computerTurnCode);
-            turnCodesDecorator(computerTurnCodes, computerCode, encryptedComputerTurnCodes);
+            turnCodesDecorator(computerTurnCodes, code, encryptedComputerTurnCodes);
+            std::vector<std::string> s = encryptedComputerTurnCodes;
             if (contains("4B0C", encryptedComputerTurnCodes)) {
                 screen.ExitLoopClosure()();
                 screen.Loop(componentLose);

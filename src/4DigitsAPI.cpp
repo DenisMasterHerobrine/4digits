@@ -1,16 +1,16 @@
-#include "4DigitsAPI.h" // for initial functions prototypes.
-
+﻿#include "4DigitsAPI.h" // for initial functions prototypes.
+#include "Utilities.h" // for proprietary methods from the Utilities API of the game.
 #include "Random.h" // for getSeed() method from Random API.
 
 #include "string" // for char* and strcpy()/std::to_string conversion
-#include <algorithm>
-#include <set>
-#include <time.h>
-#include <vector>
-#include <unordered_set>
-#include <Utilities.h>
+#include "algorithm" // 
+#include "set" // for sets and it's number unifications
+#include "time.h" // for time and MaTS Randomization algorithm.
+#include "vector" // for vectors and storing objects in memory.
+#include "unordered_set" // for sets and it's number unifications
 
 // Checks if player's hidden code is unique and all numbers in the code are not the same.
+// Проверяем, уникальное ли число пользователя и является ли четырёхзначным числом.
 char* isUniqueHiddenCode(const char* code) {
 	size_t length = strlen(code);
 	char* errorCode = "INITIALIZED_SUCCESSFULLY";
@@ -53,6 +53,7 @@ char* isUniqueHiddenCode(const char* code) {
 }
 
 // Checks if player's hidden code is correct to make a turn.
+// Проверяем, верное ли число пользователя и является ли четырёхзначным числом, чтобы сделать ход.
 char* isValidCode(const char* code) {
 	size_t length = strlen(code);
 	char* errorCode = "INITIALIZED_SUCCESSFULLY";
@@ -77,6 +78,7 @@ char* isValidCode(const char* code) {
 }
 
 // Encodes a code into a "bulls and cows" based code.
+// Шифрует число в комбинацию количества "коров и быков".
 std::vector<std::string> encodeVector(std::vector<std::string> v, std::string encryptCode, std::string errorEncryptionCode) {
 	std::vector<std::string> encodedVector;
 	if (encryptCode.size() != 4 && !v.empty()) {
@@ -123,15 +125,21 @@ std::vector<std::string> encodeVector(std::vector<std::string> v, std::string en
 }
 
 // Decorates a vector<string> codes array into something cool.
-// Turns an array ["1234", "4321"] into stylized array:
+// Example: Turns an array ["1234", "4321"] into stylized array:
 // Turn 1: 1234; 
 // Turn 2: 4321.
+// Декорирует Вектор с элементами типа String (vector<string>) в более симпатичный Вектор.
+// Пример: Превращает массив ["1234", "4321"] в стилизованный массив:
+// Ход 1: 1234; 
+// Ход 2: 4321.
 std::string turnCodesDecorator(std::vector<std::string> v, std::string keyCode, std::vector<std::string>& v2) {
 	int n = v.size();
 	std::string errorCode{};
 	v2 = encodeVector(v, keyCode, errorCode);
 
 	std::string res{};
+	
+	// Generate a beautified string with line breaking.
 	for (int i = 0; i < n; i++) {
 		if (!(i == n - 1)) res += "Turn " + std::to_string(i + 1) + ": " + v2[i] + + " (" + v[i] + "); \n";
 		else {
@@ -142,6 +150,8 @@ std::string turnCodesDecorator(std::vector<std::string> v, std::string keyCode, 
 	return res;
 }
 
+// Creates an Erastophen's Vector which memorize numbers for Computer that not exist in User's code.
+// Создаёт "массив Эрастофена", который запоминает числа, которые не встречались в числе Пользователя, для компьютера.
 void updateErastophenVector(std::string key, std::string code, std::vector<char>& erastophenVector) {
 	if (key.size() == 4 && code.size() == 4) {
 		// Get hidden code keys;
@@ -158,6 +168,7 @@ void updateErastophenVector(std::string key, std::string code, std::vector<char>
 }
 
 // Checks if in generated code all chars are unique (do not misuse with unordered_set's unification)
+// Проверяет сгенерированный код на уникальность символов.
 bool uniqueCharacters(std::string str)
 {
 	// If at any time we encounter 2
@@ -176,6 +187,7 @@ bool uniqueCharacters(std::string str)
 }
 
 // Generates a hidden code using "Memory and Time Salting" (MaTS) algorithm.
+// Генерирует число на основе алгоритма "Memory and Time Salting".
 std::string generateHiddenCode() {
 	srand(static_cast<int>(getSeed())); // time(0) causes here a huge memory leak, wtf.
 	char* arrayCode = new char{};
@@ -190,7 +202,8 @@ std::string generateHiddenCode() {
 	return arrayCode;
 }
 
-// Generates a hidden code using "Memory and Time Salting" (MaTS) algorithm and Erastophen strategy generated during game.
+// Generates a hidden code using "Memory and Time Salting" (MaTS) algorithm and Erastophen logic generated during game. (THIS IS NOT THE ERASTOPHEN'S STRATEGY)
+// Создаёт код на основе алгоритма "Memory and Time Salting" применяя стратегию на основе логики решета Эрастофена (НО ЭТО НЕ САМО РЕШЕТО ЭРАСТОФЕНА!!) во время игры.
 std::string generateErastophenCode(std::vector<char>& array) {
 	srand(static_cast<int>(getSeed()));
 	

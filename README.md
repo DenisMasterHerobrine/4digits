@@ -28,7 +28,7 @@
 
 <div align="center"><h1> Downloads</h1></div>
 <div align="center">
-C++ Console Edition can be downloaded from <a href="https://github.com/DenisMasterHerobrine/4digits/releases">releases</a> section or built from sources.
+C++ Console Edition can be downloaded from <a href="https://github.com/DenisMasterHerobrine/4digits/releases">releases</a> section or built from sources using CMake and CMakeLists.
 </div> 
 
 <div align="center"><h1> Contributors and Maintainers</h1></div>

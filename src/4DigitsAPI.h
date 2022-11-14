@@ -2,7 +2,6 @@
 #include <string>
 #include <vector>
 
-// Generates a hidden code using "Memory and Time Salting" (MaTS) algorithm.
 std::string generateHiddenCode();
 
 std::string generateErastophenCode(std::vector<char>&);

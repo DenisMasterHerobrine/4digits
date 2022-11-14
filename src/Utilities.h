@@ -6,6 +6,8 @@ void playMainMenuMusic();
 
 void stopMusic();
 
+void setVolume(int);
+
 void setWindowName(const std::string&);
 
 void executeLink(const std::string&);

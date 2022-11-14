@@ -26,6 +26,62 @@ void stopMusic()
     PlaySound(NULL, NULL, SND_RESOURCE | SND_ASYNC | SND_LOOP);
 }
 
+void setVolume(int volume) {
+    switch (volume) {
+    case 0: {
+        waveOutSetVolume((HWAVEOUT)WAVE_MAPPER, MAKELONG(0x0000, 0x0000)); break;
+    }
+    case 6: {
+        waveOutSetVolume((HWAVEOUT)WAVE_MAPPER, MAKELONG(0x1111, 0x1111)); break;
+    }
+    case 12: {
+        waveOutSetVolume((HWAVEOUT)WAVE_MAPPER, MAKELONG(0x2222, 0x2222)); break;
+    }
+    case 18: {
+        waveOutSetVolume((HWAVEOUT)WAVE_MAPPER, MAKELONG(0x3333, 0x3333)); break;
+    }
+    case 24: {
+        waveOutSetVolume((HWAVEOUT)WAVE_MAPPER, MAKELONG(0x4444, 0x4444)); break;
+    }
+    case 30: {
+        waveOutSetVolume((HWAVEOUT)WAVE_MAPPER, MAKELONG(0x5555, 0x5555)); break;
+    }
+    case 36: {
+        waveOutSetVolume((HWAVEOUT)WAVE_MAPPER, MAKELONG(0x6666, 0x6666)); break;
+    }
+    case 42: {
+        waveOutSetVolume((HWAVEOUT)WAVE_MAPPER, MAKELONG(0x7777, 0x7777)); break;
+    }
+    case 48: {
+        waveOutSetVolume((HWAVEOUT)WAVE_MAPPER, MAKELONG(0x8888, 0x8888)); break;
+    }
+    case 54: {
+        waveOutSetVolume((HWAVEOUT)WAVE_MAPPER, MAKELONG(0x9999, 0x9999)); break;
+    }
+    case 60: {
+        waveOutSetVolume((HWAVEOUT)WAVE_MAPPER, MAKELONG(0xAAAA, 0xAAAA)); break;
+    }
+    case 66: {
+        waveOutSetVolume((HWAVEOUT)WAVE_MAPPER, MAKELONG(0xBBBB, 0xBBBB)); break;
+    }
+    case 72: {
+        waveOutSetVolume((HWAVEOUT)WAVE_MAPPER, MAKELONG(0xCCCC, 0xCCCC)); break;
+    }
+    case 78: {
+        waveOutSetVolume((HWAVEOUT)WAVE_MAPPER, MAKELONG(0xDDDD, 0xDDDD)); break;
+    }
+    case 84: {
+        waveOutSetVolume((HWAVEOUT)WAVE_MAPPER, MAKELONG(0xEEEE, 0xEEEE)); break;
+    }
+    case 90: {
+        waveOutSetVolume((HWAVEOUT)WAVE_MAPPER, MAKELONG(0xFFFF, 0xFFFF)); break;
+    }
+    case 96: {
+        waveOutSetVolume((HWAVEOUT)WAVE_MAPPER, MAKELONG(0xFFFF, 0xFFFF)); break;
+    }
+    }
+}
+
 // Sets a current window name. 
 // Calls with a constant string or const char* array where the name of the window is placed. 
 // 

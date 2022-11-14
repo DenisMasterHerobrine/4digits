@@ -57,6 +57,11 @@ auto menu = Container::Vertical(
     },
     &selected);
 
+int musicVolume = 96;
+auto sliderVolume = Container::Vertical({
+    Slider("Music Volume:", &musicVolume, 0, 96, 6),
+    });
+
 // Display together the menu with a border
 auto renderer = Renderer(menu, [&] {
     return vbox({
@@ -107,6 +112,19 @@ auto rendererHowToPlay = Renderer([&] {
              paragraph("Cows (C) counter means that the N numbers are containing in the opponent's code, but they're are not on the same place as in the opponent's code.") | center | color(Color::White),
              paragraph("The first player, who solves the opponent's code faster, is won.") | center | color(Color::White),
              text("") | center,
+             text("Press ENTER to leave Credits menu.") | center | color(Color::White),
+        }) | border | bgcolor(Color::MediumPurple4);
+    });
+
+auto rendererOptions = Renderer([&] {
+    return vbox({
+             text("Four Digits - How to Play?") | center | color(Color::LightSkyBlue1),
+             separator(),
+             text("Settings:") | center,
+             text(""),
+             text(""),
+             sliderVolume->Render(),
+             text(""),
              text("Press ENTER to leave Credits menu.") | center | color(Color::White),
         }) | border | bgcolor(Color::MediumPurple4);
     });
@@ -258,6 +276,28 @@ auto componentHowToPlay = CatchEvent(rendererHowToPlay, [&](Event event) {
     }
 );
 
+auto componentOptions = CatchEvent(rendererOptions, [&](Event event) {
+    if (event == Event::Character('\n')) {
+        screen.ExitLoopClosure()();
+        return true;
+    }
+
+    if (event == Event::Character('A') || event == Event::Character('a')) {
+        musicVolume -= 6;
+        setVolume(musicVolume);
+        return true;
+    }
+
+    if (event == Event::Character('D') || event == Event::Character('d')) {
+        musicVolume += 6;
+        setVolume(musicVolume);
+        return true;
+    }
+    
+    return false;
+    }
+);
+
 auto componentCredits = CatchEvent(rendererCredits, [&](Event event) {
     if (event == Event::Character('\n')) {
         screen.ExitLoopClosure()();
@@ -291,6 +331,13 @@ auto component = CatchEvent(renderer, [&](Event event) {
     if (event == Event::Character('\n') && selected == 1) {
         screen.ExitLoopClosure()();
         screen.Loop(componentHowToPlay);
+
+        return true;
+    }
+
+    if (event == Event::Character('\n') && selected == 2) {
+        screen.ExitLoopClosure()();
+        screen.Loop(componentOptions);
 
         return true;
     }

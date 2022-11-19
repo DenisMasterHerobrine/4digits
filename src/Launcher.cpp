@@ -83,8 +83,7 @@ auto rendererGame = Renderer(componentInput, [&] {
            separator(),
            hbox(text(" Your Code: "), inputUserCode->Render()) | frame,
            separator(),
-           hbox(text(" Debug: "), text(code)) | frame,
-           hbox(text(" Debug: ERROR_CODE = "), text(errorCode)) | frame,
+           hbox(text(" Code Validator Console: "), text(errorCode)) | frame,
         }) |
         border | bgcolor(Color::MediumPurple4);
     });

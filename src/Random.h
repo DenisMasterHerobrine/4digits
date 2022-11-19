@@ -1,5 +1,6 @@
 #pragma once
 #include "Random.cpp"
+
 /*
 *	Random.cpp | Password Generator's Random API | Made by DMHDev | v1.0.0
 *	Memory and Time Salting Randomness algorithm.

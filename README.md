@@ -1,6 +1,11 @@
 <div align="center"><h1> 4 Digits </h1></div>
 
-<div align="center">"4 Digits" is an C++ console/UE5 game, where the player should guess the 4 digit number to win the game. Similar to Wordle, but for 4 digit numbers.</div>
+<div align="center">"4 Digits" is an C++ console/UE5 game, where the player should guess the 4 digit number to win the game. Similar to Wordle, but for 4 digit numbers.
+<br> <br>
+<b>THIS REPOSITORY AND C++ CONSOLE EDITION IS NO LONGER MAINTAINED.</b>
+<br>
+However, you still can send PRs and/or create issues regarding critical bugs or claims.
+</div>
 
 <div align="center"><h1> Dependencies</h1></div>
 <div align="center">Requires
